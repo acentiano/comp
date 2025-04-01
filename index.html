@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Attendance Registration System</title>
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Global Reset & Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        /* ----------------- LOGIN PAGE STYLES ----------------- */
+        #login-header {
+            position: fixed;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 350;
+            font-size: 2em;
+            color: #FFD700;
+            /* Gold */
+            letter-spacing: 2px;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(270deg, #ff6a00, #ee0979, #9b00e8);
+            background-size: 400% 400%;
+            animation: gradientAnimationLogin 8s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+
+        @keyframes gradientAnimationLogin {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #login-box {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px 40px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+            animation: fadeIn 1s ease-out;
+        }
+
+        #login-box h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+
+        #login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #login-box button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #27ae60;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #login-box button:hover {
+            background: #219150;
+        }
+
+        #login-error {
+            color: #e74c3c;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ----------------- MAIN SYSTEM STYLES ----------------- */
+        header {
+            background: linear-gradient(270deg, #ff6a00, #ee0979, #9b00e8);
+            background-size: 600% 600%;
+            animation: gradientAnimation 10s ease infinite;
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #navbar {
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #nav-list {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        #nav-list li {
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        #nav-list li:hover,
+        #nav-list li.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #main-system {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2c3e50, #bdc3c7);
+            color: #fff;
+        }
+
+        #content {
+            flex: 1;
+            padding: 30px;
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            width: 220px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: scale(1.1);
+        }
+
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container button,
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            outline: none;
+        }
+
+        .form-container button {
+            background: #27ae60;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background: #219150;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        table th {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.7);
+            align-items: center;
+            justify-content: center;
+            animation: fadeInModal 0.5s;
+        }
+
+        .modal-content {
+            background: #34495e;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            animation: slideIn 0.5s;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-30px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9em;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #nav-list {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Section -->
+    <div id="login-header" class="animate__animated animate__fadeInDown">
+        WELCOME TO LILONGWE UNIVERSITY OF AGRICULTURE AND NATURAL RESOURCES ATTENDANCE SYSTEM
+    </div>
+    <div id="login-container">
+        <div id="login-box" class="animate__animated animate__fadeInDown">
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username" />
+            <input type="password" id="login-password" placeholder="Password" />
+            <button id="login-btn">Login</button>
+            <div id="login-error"></div>
+        </div>
+    </div>
+
+    <!-- Main System -->
+    <div id="main-system">
+        <header>
+            <h1>Attendance Registration System</h1>
+            <p id="welcome-msg">Welcome</p>
+        </header>
+        <nav id="navbar">
+            <ul id="nav-list"></ul>
+        </nav>
+        <div id="content">
+            <!-- Lecturer Tabs -->
+            <section id="dashboard" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Overall Class Diary</h1>
+                <div class="stats">
+                    <div class="stat">
+                        <h2>Total Diary Entries</h2>
+                        <p id="sessionCount">0</p>
+                    </div>
+                    <div class="stat">
+                        <h2>Total Present</h2>
+                        <p id="totalPresentCount">0</p>
+                    </div>
+                    <div class="stat">
+                        <h2>Total Absent</h2>
+                        <p id="totalAbsentCount">0</p>
+                    </div>
+                </div>
+                <canvas id="attendanceChart" width="400" height="200"></canvas>
+            </section>
+
+            <section id="mark-attendance" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Mark Attendance</h1>
+                <div class="form-container">
+                    <label for="courseSelect">Select Course</label>
+                    <select id="courseSelect">
+                        <option value="Computer Networking">Computer Networking</option>
+                        <option value="Introduction to Programming">Introduction to Programming</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English Language">English Language</option>
+                    </select>
+                    <button id="startDiaryBtn" style="background: #2980b9;">Start New Diary Entry</button>
+                    <p id="sessionInfo" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
+                </div>
+                <div class="form-container" id="attendanceTableContainer" style="display:none;">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Present</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- Populated dynamically --></tbody>
+                    </table>
+                    <button id="submitAttendanceBtn">Submit Attendance</button>
+                    <div id="attendanceFeedback" class="animate__animated" style="height: 30px;"></div>
+                </div>
+                <div class="form-container" id="clearSessionContainer" style="display:none;">
+                    <button id="clearSessionBtn" style="background: #c0392b;">Clear Current Session</button>
+                </div>
+            </section>
+
+            <section id="records" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Class Diary Records</h1>
+                <div class="form-container">
+                    <label for="courseFilter">Filter by Course:</label>
+                    <select id="courseFilter">
+                        <option value="">All</option>
+                        <option value="Computer Networking">Computer Networking</option>
+                        <option value="Introduction to Programming">Introduction to Programming</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English Language">English Language</option>
+                    </select>
+                    <button id="filterRecordsBtn">Filter</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entry Timestamp</th>
+                            <th>Course</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTable"><!-- Populated dynamically --></tbody>
+                </table>
+                <p style="text-align: center; margin-top: 10px;">Click on any diary entry for details.</p>
+            </section>
+
+            <section id="overview" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">General Attendance Overview</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Entries Attended</th>
+                            <th>Total Diary Entries</th>
+                            <th>Attendance %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overviewTable"><!-- Populated dynamically --></tbody>
+                </table>
+                <p style="text-align: center; margin-top: 10px;">Click on a student row for detailed history.</p>
+            </section>
+
+            <section id="manage-excuses" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Manage Student Excuses</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Entry Timestamp</th>
+                            <th>Student</th>
+                            <th>Excuse</th>
+                            <th>Evidence</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="excusesTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </section>
+
+            <section id="manage-announcements" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Manage Announcements</h1>
+                <div class="form-container">
+                    <label for="announcementTitle">Title</label>
+                    <input type="text" id="announcementTitle" placeholder="Announcement Title" />
+                    <label for="announcementMessage">Message</label>
+                    <textarea id="announcementMessage" placeholder="Enter your announcement here..."></textarea>
+                    <button id="postAnnouncementBtn">Post Announcement</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Message</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="announcementsTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </section>
+
+            <!-- STUDENT TABS -->
+            <section id="dashboard-student" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">My Attendance</h1>
+                <div id="absentWarning" style="text-align:center; color:#e74c3c; font-weight:bold;"></div>
+                <div class="stats">
+                    <div class="stat">
+                        <h2>Total Diary Entries</h2>
+                        <p id="sessionCountStudent">0</p>
+                    </div>
+                    <div class="stat">
+                        <h2>My Present Count</h2>
+                        <p id="presentCountStudent">0</p>
+                    </div>
+                    <div class="stat">
+                        <h2>My Absent Count</h2>
+                        <p id="absentCountStudent">0</p>
+                    </div>
+                </div>
+                <canvas id="attendanceChartStudent" width="400" height="200"></canvas>
+            </section>
+
+            <section id="my-excuses" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">My Excuses</h1>
+                <div class="form-container">
+                    <label for="excuseDiarySelect">Select Diary Entry</label>
+                    <select id="excuseDiarySelect"><!-- Populated dynamically --></select>
+                    <label for="excuseText">Your Excuse</label>
+                    <textarea id="excuseText" placeholder="Enter your reason for absence..."></textarea>
+                    <label for="evidenceFile">Upload Evidence (if any)</label>
+                    <input type="file" id="evidenceFile" accept="image/*" />
+                    <button id="submitExcuseBtn">Submit Excuse</button>
+                    <div id="excuseFeedback" class="animate__animated" style="height: 30px;"></div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diary Entry</th>
+                            <th>Excuse</th>
+                            <th>Evidence</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myExcusesTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </section>
+
+            <section id="announcements" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Announcements</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentAnnouncementsTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </section>
+
+            <section id="change-password" class="tab-content">
+                <h1 class="animate__animated animate__fadeInDown">Change Password</h1>
+                <div class="form-container">
+                    <label for="oldPassword">Old Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter old password" />
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password" />
+                    <label for="confirmNewPassword">Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" placeholder="Confirm new password" />
+                    <button id="changePasswordBtn">Change Password</button>
+                    <div id="changePasswordFeedback" class="animate__animated" style="height: 30px;"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Modal for Diary Entry Details -->
+        <div id="sessionModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeSessionModal">&times;</span>
+                <h2>Diary Entry Details: <span id="modalSessionDate"></span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Status</th>
+                            <th>Excuse</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionDetailsTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Modal for Student Attendance History -->
+        <div id="studentModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeStudentModal">&times;</span>
+                <h2>Attendance History for: <span id="modalStudentName"></span></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diary Entry</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentDetailsTable"><!-- Populated dynamically --></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>© 2025 Attendance Registration System | Developed by Chrispine Cheyo</p>
+        </footer>
+    </div>
+
+    <script>
+        /************* STORAGE KEYS *************/
+        const STORAGE_DIARY = "luanarDiaryEntries";
+        const STORAGE_EXCUSES = "luanarExcuses";
+        const STORAGE_ANNOUNCEMENTS = "luanarAnnouncements";
+        const STORAGE_STUDENT_PASSWORDS = "luanarStudentPasswords";
+
+        /************* INITIALIZE STORAGE IF NOT PRESENT *************/
+        if (!localStorage.getItem(STORAGE_DIARY)) {
+            localStorage.setItem(STORAGE_DIARY, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_EXCUSES)) {
+            localStorage.setItem(STORAGE_EXCUSES, JSON.stringify({}));
+        }
+        if (!localStorage.getItem(STORAGE_ANNOUNCEMENTS)) {
+            localStorage.setItem(STORAGE_ANNOUNCEMENTS, JSON.stringify([]));
+        }
+        if (!localStorage.getItem(STORAGE_STUDENT_PASSWORDS)) {
+            localStorage.setItem(STORAGE_STUDENT_PASSWORDS, JSON.stringify({}));
+        }
+
+        /************* GLOBAL VARIABLES & DATA *************/
+        let userRole = ""; // "lecturer" or "student"
+        let loggedUser = "";
+        const studentsData = [
+            { name: "Zindaba Kunkwenzu", passcode: "240302121" },
+            { name: "Mayamiko Chabvi", passcode: "240302125" },
+            { name: "Kettrina Matola", passcode: "240302141" },
+            { name: "Diness Kumcheza", passcode: "240302153" },
+            { name: "Tazizwa Kambalame", passcode: "240302155" },
+            { name: "Edward Makopa", passcode: "240302137" },
+            { name: "Vanessa Matoliro", passcode: "240302129" },
+            { name: "Gracious Mwalwanda", passcode: "240302105" },
+            { name: "Bright Manda", passcode: "240302107" },
+            { name: "Paul Munthali", passcode: "240302103" },
+            { name: "Abgail Lyden", passcode: "240302148" },
+            { name: "Vincent Kainga", passcode: "240302122" },
+            { name: "Ephiness Makalani", passcode: "240302149" },
+            { name: "Clement John", passcode: "240302118" },
+            { name: "Stanly Beza", passcode: "240302126" },
+            { name: "Mirriam Mithi", passcode: "240302158" },
+            { name: "Vithero Ngulube", passcode: "240302123" },
+            { name: "Theo Henry", passcode: "240302116" },
+            { name: "Eugene Fatch", passcode: "240302108" },
+            { name: "Martha Hajapi", passcode: "240302151" },
+            { name: "Tonia Fryton Nyasulu", passcode: "240302115" },
+            { name: "Chrispine Cheyo", passcode: "240302112" },
+            { name: "Nellie Pemba", passcode: "240302143" },
+            { name: "Ishmael Matewere", passcode: "240302114" },
+            { name: "Mayamiko Mwale", passcode: "240302130" },
+            { name: "Winnie Moyo", passcode: "240302160" },
+            { name: "Chawanangwa Mkandawire", passcode: "240302136" },
+            { name: "Caroline Kachipapa", passcode: "240302139" },
+            { name: "Demowbray Mutiya", passcode: "240302138" },
+            { name: "Gracious Majawa", passcode: "240302110" },
+            { name: "Owen Ridiams Kayira", passcode: "240302131" },
+            { name: "Dalitso Pensulo", passcode: "240302156" },
+            { name: "Blessings Jossam", passcode: "240302109" },
+            { name: "Gerard  Gama", passcode: "240302127" },
+            { name: "Panashe Navaya", passcode: "240302159" },
+            { name: "Sunganani January", passcode: "240302154" },
+            { name: "Nasho Marko", passcode: "240302120" },
+            { name: "Raphael Aggrey Chiumia", passcode: "240302135" },
+            { name: "Augrieve Chavinda", passcode: "240302111" },
+            { name: "Yamikani Chirwa", passcode: "240302145" },
+            { name: "Peter Witman", passcode: "240302117" },
+            { name: "Priscilla Thandolwethu Mwala", passcode: "240302144" },
+            { name: "Natalie Oscar", passcode: "240302150" },
+            { name: "Tionge Singini", passcode: "240302152" },
+            { name: "Grant Mkyelu", passcode: "240302106" },
+            { name: "Ulemu Chandauka", passcode: "240302113" },
+            { name: "Ellen Mtonga", passcode: "240302140" },
+            { name: "Tawonga Ng’anjo", passcode: "240302146" },
+            { name: "Kennie Mkandawire", passcode: "240302132" },
+            { name: "Chisomo Jere", passcode: "240302134" },
+            { name: "Samuel Makaka", passcode: "180100287" },
+            { name: "Evalistar Chipanga", passcode: "240302157" },
+            { name: "Mary Mpoma", passcode: "240302142" }
+        ];
+        const students = studentsData.map(s => s.name);
+
+        /************* LOGIN FUNCTIONALITY *************/
+        const loginBtn = document.getElementById("login-btn");
+        const loginUsername = document.getElementById("login-username");
+        const loginPassword = document.getElementById("login-password");
+        const loginError = document.getElementById("login-error");
+        const loginContainer = document.getElementById("login-container");
+        const mainSystem = document.getElementById("main-system");
+        const welcomeMsg = document.getElementById("welcome-msg");
+        const lecturerCred = { username: "nrc", password: "126124" };
+        let studentPasswords = JSON.parse(localStorage.getItem(STORAGE_STUDENT_PASSWORDS)) || {};
+
+        loginBtn.addEventListener("click", () => {
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value.trim();
+            if (username === lecturerCred.username && password === lecturerCred.password) {
+                userRole = "lecturer";
+                loggedUser = "nrc";
+            } else {
+                const student = studentsData.find(s => s.name.toLowerCase() === username.toLowerCase());
+                if (student) {
+                    const currentPass = studentPasswords[student.name] || student.passcode;
+                    if (password === currentPass) {
+                        userRole = "student";
+                        loggedUser = student.name;
+                    } else {
+                        loginError.textContent = "Invalid credentials. Please try again.";
+                        return;
+                    }
+                } else {
+                    loginError.textContent = "Invalid credentials. Please try again.";
+                    return;
+                }
+            }
+            document.getElementById("login-header").style.display = "none";
+            loginContainer.style.display = "none";
+            mainSystem.style.display = "flex";
+            welcomeMsg.textContent = `Welcome, ${loggedUser}`;
+            generateNav();
+            if (userRole === "lecturer") updateDashboard();
+            if (userRole === "student") updateDashboardStudent();
+        });
+
+        /************* NAVIGATION & ROLE-BASED TABS *************/
+        const navList = document.getElementById("nav-list");
+        function generateNav() {
+            navList.innerHTML = "";
+            if (userRole === "lecturer") {
+                addNavTab("Dashboard", "dashboard");
+                addNavTab("Mark Attendance", "mark-attendance");
+                addNavTab("Class Diary Records", "records");
+                addNavTab("General Overview", "overview");
+                addNavTab("Manage Excuses", "manage-excuses");
+                addNavTab("Manage Announcements", "manage-announcements");
+            } else if (userRole === "student") {
+                addNavTab("My Attendance", "dashboard-student");
+                addNavTab("My Excuses", "my-excuses");
+                addNavTab("Announcements", "announcements");
+                addNavTab("Change Password", "change-password");
+            }
+            document.querySelector("#nav-list li").classList.add("active");
+            showTabContent(document.querySelector("#nav-list li").getAttribute("data-tab"));
+        }
+        function addNavTab(label, tabId) {
+            const li = document.createElement("li");
+            li.textContent = label;
+            li.setAttribute("data-tab", tabId);
+            li.addEventListener("click", () => {
+                document.querySelectorAll("#nav-list li").forEach(item => item.classList.remove("active"));
+                li.classList.add("active");
+                showTabContent(tabId);
+            });
+            navList.appendChild(li);
+        }
+        function showTabContent(tabId) {
+            document.querySelectorAll(".tab-content").forEach(section => {
+                section.id === tabId ? section.classList.add("active") : section.classList.remove("active");
+            });
+            if (userRole === "student" && tabId === "my-excuses") populateMyExcuses();
+            if (userRole === "student" && tabId === "announcements") populateStudentAnnouncements();
+            if (userRole === "student" && tabId === "dashboard-student") updateDashboardStudent();
+        }
+
+        /************* DIARY (ATTENDANCE) MANAGEMENT *************/
+        function getDiaryEntries() {
+            return JSON.parse(localStorage.getItem(STORAGE_DIARY));
+        }
+        function saveDiaryEntries(entries) {
+            localStorage.setItem(STORAGE_DIARY, JSON.stringify(entries));
+        }
+
+        /************* LECTURER FUNCTIONALITY *************/
+        document.getElementById("startDiaryBtn").addEventListener("click", () => {
+            if (userRole !== "lecturer") return;
+            const course = document.getElementById("courseSelect").value;
+            const id = getCurrentTimestamp();
+            const entry = { id, course, attendance: {} };
+            students.forEach(student => { entry.attendance[student] = false; });
+            let entries = getDiaryEntries();
+            entries.push(entry);
+            saveDiaryEntries(entries);
+            document.getElementById("sessionInfo").textContent = `Current Diary Entry: ${id} | Course: ${course}`;
+            populateAttendanceTable();
+            updateDashboard();
+            populateRecordsTable();
+            populateOverviewTable();
+            document.getElementById("attendanceTableContainer").style.display = "block";
+            document.getElementById("clearSessionContainer").style.display = "block";
+        });
+
+        document.getElementById("clearSessionBtn").addEventListener("click", () => {
+            if (userRole !== "lecturer") return;
+            let entries = getDiaryEntries();
+            if (entries.length > 0) {
+                const latest = entries.sort((a, b) => a.id.localeCompare(b.id)).pop();
+                entries = entries.filter(e => e.id !== latest.id);
+                saveDiaryEntries(entries);
+                document.getElementById("attendanceFeedback").textContent = "Latest diary entry cleared.";
+                document.getElementById("sessionInfo").textContent = "";
+                document.getElementById("attendanceTableContainer").style.display = "none";
+                updateDashboard();
+                populateRecordsTable();
+                populateOverviewTable();
+            }
+        });
+
+        function populateAttendanceTable() {
+            let entries = getDiaryEntries();
+            const latest = entries.sort((a, b) => a.id.localeCompare(b.id)).pop();
+            if (!latest) return;
+            const tbody = document.getElementById("attendanceTable").querySelector("tbody");
+            tbody.innerHTML = "";
+            students.forEach(student => {
+                const tr = document.createElement("tr");
+                const tdName = document.createElement("td");
+                tdName.textContent = student;
+                const tdCheckbox = document.createElement("td");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = latest.attendance[student];
+                checkbox.addEventListener("change", () => {
+                    latest.attendance[student] = checkbox.checked;
+                });
+                tdCheckbox.appendChild(checkbox);
+                tr.appendChild(tdName);
+                tr.appendChild(tdCheckbox);
+                tbody.appendChild(tr);
+            });
+            saveDiaryEntries(entries);
+        }
+
+        document.getElementById("submitAttendanceBtn").addEventListener("click", () => {
+            if (userRole !== "lecturer") return;
+            let entries = getDiaryEntries();
+            const latest = entries.sort((a, b) => a.id.localeCompare(b.id)).pop();
+            if (latest) {
+                saveDiaryEntries(entries);
+                document.getElementById("attendanceFeedback").textContent =
+                    `Attendance submitted for diary entry ${latest.id}!`;
+                updateDashboard();
+                populateRecordsTable();
+                populateOverviewTable();
+            }
+        });
+
+        function updateDashboard() {
+            let entries = getDiaryEntries();
+            let total = entries.length;
+            let totalPresent = 0, totalAbsent = 0;
+            entries.forEach(entry => {
+                const present = Object.values(entry.attendance).filter(s => s).length;
+                totalPresent += present;
+                totalAbsent += (students.length - present);
+            });
+            document.getElementById("sessionCount").textContent = total;
+            document.getElementById("totalPresentCount").textContent = totalPresent;
+            document.getElementById("totalAbsentCount").textContent = totalAbsent;
+            updateChart(totalPresent, totalAbsent);
+        }
+
+        let attendanceChart;
+        function initChart(present, absent) {
+            attendanceChart = new Chart(document.getElementById("attendanceChart").getContext("2d"), {
+                type: "doughnut",
+                data: {
+                    labels: ["Total Present", "Total Absent"],
+                    datasets: [{
+                        data: [present, absent],
+                        backgroundColor: ["#27ae60", "#e74c3c"],
+                        hoverOffset: 6
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+            });
+        }
+        function updateChart(present, absent) {
+            if (!attendanceChart) {
+                initChart(present, absent);
+            } else {
+                attendanceChart.data.datasets[0].data = [present, absent];
+                attendanceChart.update();
+            }
+        }
+
+        function populateRecordsTable() {
+            let entries = getDiaryEntries();
+            const tbody = document.getElementById("recordsTable");
+            tbody.innerHTML = "";
+            const filter = document.getElementById("courseFilter").value;
+            entries = entries.filter(entry => filter === "" || entry.course === filter);
+            entries.sort((a, b) => a.id.localeCompare(b.id)).forEach(entry => {
+                const present = Object.values(entry.attendance).filter(s => s).length;
+                const absent = students.length - present;
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${entry.id}</td>
+          <td>${entry.course}</td>
+          <td>${present}</td>
+          <td>${absent}</td>
+          <td><button onclick="clearSpecificSession('${entry.id}')">Clear Session</button></td>
+        `;
+                tr.addEventListener("click", () => showSessionDetails(entry.id));
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearSpecificSession(id) {
+            if (userRole !== "lecturer") return;
+            let entries = getDiaryEntries();
+            entries = entries.filter(entry => entry.id !== id);
+            saveDiaryEntries(entries);
+            alert("Diary entry cleared.");
+            updateDashboard();
+            populateRecordsTable();
+            populateOverviewTable();
+        }
+
+        function populateOverviewTable() {
+            let entries = getDiaryEntries();
+            const tbody = document.getElementById("overviewTable");
+            tbody.innerHTML = "";
+            students.forEach(student => {
+                let attended = 0;
+                let total = entries.length;
+                entries.forEach(entry => {
+                    if (entry.attendance[student]) attended++;
+                });
+                const percentage = total ? ((attended / total) * 100).toFixed(1) : "0.0";
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${student}</td><td>${attended}</td><td>${total}</td><td>${percentage}%</td>`;
+                tr.addEventListener("click", () => showStudentDetails(student));
+                tbody.appendChild(tr);
+            });
+        }
+
+        /************* STUDENT FUNCTIONALITY *************/
+        function updateDashboardStudent() {
+            let entries = getDiaryEntries();
+            let total = entries.length;
+            let attended = 0;
+            entries.forEach(entry => {
+                if (entry.attendance[loggedUser]) attended++;
+            });
+            document.getElementById("sessionCountStudent").textContent = total;
+            document.getElementById("presentCountStudent").textContent = attended;
+            document.getElementById("absentCountStudent").textContent = total - attended;
+            updateChartStudent(attended, total - attended);
+
+            const absentWarning = document.getElementById("absentWarning");
+            if (total > 0) {
+                const latest = entries.sort((a, b) => a.id.localeCompare(b.id)).pop();
+                absentWarning.textContent = latest.attendance[loggedUser] ? "" : "Warning: You were absent in your last session!";
+            } else {
+                absentWarning.textContent = "";
+            }
+        }
+
+        let attendanceChartStudent;
+        function initChartStudent(present, absent) {
+            attendanceChartStudent = new Chart(document.getElementById("attendanceChartStudent").getContext("2d"), {
+                type: "doughnut",
+                data: {
+                    labels: ["Present", "Absent"],
+                    datasets: [{
+                        data: [present, absent],
+                        backgroundColor: ["#27ae60", "#e74c3c"],
+                        hoverOffset: 6
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: "bottom" } } }
+            });
+        }
+        function updateChartStudent(present, absent) {
+            if (!attendanceChartStudent) {
+                initChartStudent(present, absent);
+            } else {
+                attendanceChartStudent.data.datasets[0].data = [present, absent];
+                attendanceChartStudent.update();
+            }
+        }
+
+        /************* EXCUSES MANAGEMENT *************/
+        function getExcuses() {
+            return JSON.parse(localStorage.getItem(STORAGE_EXCUSES));
+        }
+        function saveExcuses(excuses) {
+            localStorage.setItem(STORAGE_EXCUSES, JSON.stringify(excuses));
+        }
+
+        function populateMyExcuses() {
+            const excuses = getExcuses();
+            const tbody = document.getElementById("myExcusesTable");
+            tbody.innerHTML = "";
+            for (let id in excuses) {
+                const ex = excuses[id];
+                if (ex.student === loggedUser) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${ex.diaryEntry}</td><td>${ex.reason}</td><td>${ex.evidence ? "Yes" : "No"}</td><td>${ex.status}</td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+            populateExcuseDiarySelect();
+        }
+        function populateExcuseDiarySelect() {
+            let entries = getDiaryEntries();
+            const select = document.getElementById("excuseDiarySelect");
+            select.innerHTML = "";
+            entries.sort((a, b) => a.id.localeCompare(b.id)).forEach(entry => {
+                if (!entry.attendance[loggedUser]) {
+                    const option = document.createElement("option");
+                    option.value = entry.id;
+                    option.textContent = `${entry.id} | ${entry.course}`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        document.getElementById("submitExcuseBtn").addEventListener("click", () => {
+            const diaryEntry = document.getElementById("excuseDiarySelect").value;
+            const reason = document.getElementById("excuseText").value.trim();
+            const evidenceFile = document.getElementById("evidenceFile").files[0];
+            if (!diaryEntry || !reason) {
+                document.getElementById("excuseFeedback").textContent = "Please select a diary entry and enter your excuse.";
+                return;
+            }
+            const evidence = evidenceFile ? evidenceFile.name : "";
+            const id = diaryEntry + "_" + loggedUser;
+            let excuses = getExcuses();
+            excuses[id] = {
+                diaryEntry,
+                student: loggedUser,
+                reason,
+                evidence,
+                status: "pending"
+            };
+            saveExcuses(excuses);
+            document.getElementById("excuseFeedback").textContent = "Excuse submitted successfully!";
+            document.getElementById("excuseText").value = "";
+            document.getElementById("evidenceFile").value = "";
+            populateMyExcuses();
+        });
+
+        function populateExcusesTable() {
+            let excuses = getExcuses();
+            const tbody = document.getElementById("excusesTable");
+            tbody.innerHTML = "";
+            for (let id in excuses) {
+                const ex = excuses[id];
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${ex.diaryEntry}</td>
+          <td>${ex.student}</td>
+          <td>${ex.reason}</td>
+          <td>${ex.evidence ? "Yes" : "No"}</td>
+          <td>${ex.status}</td>
+          <td>${ex.status === "pending"
+                        ? `<button onclick="approveExcuse('${id}')">Approve</button>
+                 <button onclick="rejectExcuse('${id}')">Reject</button>`
+                        : `<button onclick="deleteExcuse('${id}')">Delete</button>`
+                    }</td>
+        `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function approveExcuse(id) {
+            if (userRole !== "lecturer") return;
+            let excuses = getExcuses();
+            let ex = excuses[id];
+            ex.status = "approved";
+            let entries = getDiaryEntries();
+            let entry = entries.find(e => e.id === ex.diaryEntry);
+            if (entry) {
+                entry.attendance[ex.student] = true;
+                saveDiaryEntries(entries);
+            }
+            saveExcuses(excuses);
+            alert(`Excuse approved. ${ex.student} is now marked present for that session.`);
+            populateExcusesTable();
+            updateDashboard();
+            populateRecordsTable();
+            populateOverviewTable();
+        }
+
+        function rejectExcuse(id) {
+            if (userRole !== "lecturer") return;
+            let excuses = getExcuses();
+            let ex = excuses[id];
+            ex.status = "rejected";
+            saveExcuses(excuses);
+            alert(`Excuse rejected. ${ex.student} remains absent for that session.`);
+            populateExcusesTable();
+            updateDashboard();
+            populateRecordsTable();
+            populateOverviewTable();
+        }
+
+        // Allow lecturer to delete a particular announcement
+        function deleteAnnouncement(index) {
+            if (userRole !== "lecturer") return;
+            let announcements = JSON.parse(localStorage.getItem(STORAGE_ANNOUNCEMENTS));
+            announcements.splice(index, 1);
+            localStorage.setItem(STORAGE_ANNOUNCEMENTS, JSON.stringify(announcements));
+            populateAnnouncementsTable();
+            populateStudentAnnouncements();
+        }
+
+        /************* ANNOUNCEMENTS *************/
+        function getAnnouncements() {
+            return JSON.parse(localStorage.getItem(STORAGE_ANNOUNCEMENTS));
+        }
+        function saveAnnouncements(ann) {
+            localStorage.setItem(STORAGE_ANNOUNCEMENTS, JSON.stringify(ann));
+        }
+
+        document.getElementById("postAnnouncementBtn").addEventListener("click", () => {
+            if (userRole !== "lecturer") return;
+            const title = document.getElementById("announcementTitle").value.trim();
+            const message = document.getElementById("announcementMessage").value.trim();
+            if (!title || !message) {
+                alert("Please enter both title and message.");
+                return;
+            }
+            let announcements = getAnnouncements();
+            announcements.push({
+                date: getCurrentTimestamp(),
+                title,
+                message
+            });
+            saveAnnouncements(announcements);
+            document.getElementById("announcementTitle").value = "";
+            document.getElementById("announcementMessage").value = "";
+            populateAnnouncementsTable();
+            populateStudentAnnouncements();
+        });
+
+        function populateAnnouncementsTable() {
+            let announcements = getAnnouncements();
+            const tbody = document.getElementById("announcementsTable");
+            tbody.innerHTML = "";
+            announcements.forEach((a, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${a.date}</td><td>${a.title}</td><td>${a.message}</td><td><button onclick="deleteAnnouncement(${index})">Delete</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateStudentAnnouncements() {
+            let announcements = getAnnouncements();
+            const tbody = document.getElementById("studentAnnouncementsTable");
+            tbody.innerHTML = "";
+            announcements.forEach((a) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${a.date}</td><td>${a.title}</td><td>${a.message}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /************* CHANGE PASSWORD (STUDENT) *************/
+        document.getElementById("changePasswordBtn").addEventListener("click", () => {
+            if (userRole !== "student") return;
+            const oldPass = document.getElementById("oldPassword").value.trim();
+            const newPass = document.getElementById("newPassword").value.trim();
+            const confirmPass = document.getElementById("confirmNewPassword").value.trim();
+            if (!oldPass || !newPass || !confirmPass) {
+                document.getElementById("changePasswordFeedback").textContent = "Please fill in all fields.";
+                return;
+            }
+            if (newPass !== confirmPass) {
+                document.getElementById("changePasswordFeedback").textContent = "New passwords do not match.";
+                return;
+            }
+            let passwords = JSON.parse(localStorage.getItem(STORAGE_STUDENT_PASSWORDS));
+            const student = studentsData.find(s => s.name === loggedUser);
+            const currentPass = passwords[loggedUser] || student.passcode;
+            if (oldPass !== currentPass) {
+                document.getElementById("changePasswordFeedback").textContent = "Old password is incorrect.";
+                return;
+            }
+            passwords[loggedUser] = newPass;
+            localStorage.setItem(STORAGE_STUDENT_PASSWORDS, JSON.stringify(passwords));
+            document.getElementById("changePasswordFeedback").textContent = "Password changed successfully!";
+            document.getElementById("oldPassword").value = "";
+            document.getElementById("newPassword").value = "";
+            document.getElementById("confirmNewPassword").value = "";
+        });
+
+        /************* MODALS *************/
+        function showSessionDetails(id) {
+            document.getElementById("modalSessionDate").textContent = id;
+            let entries = getDiaryEntries();
+            const entry = entries.find(e => e.id === id);
+            const tbody = document.getElementById("sessionDetailsTable");
+            tbody.innerHTML = "";
+            for (let student in entry.attendance) {
+                const status = entry.attendance[student] ? "Present" : "Absent";
+                const excuses = getExcuses();
+                const exId = id + "_" + student;
+                const excuseText = excuses[exId] ? excuses[exId].reason : "";
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${student}</td><td>${status}</td><td>${excuseText}</td>`;
+                tbody.appendChild(tr);
+            }
+            document.getElementById("sessionModal").style.display = "flex";
+        }
+        function showStudentDetails(student) {
+            document.getElementById("modalStudentName").textContent = student;
+            let entries = getDiaryEntries();
+            const tbody = document.getElementById("studentDetailsTable");
+            tbody.innerHTML = "";
+            entries.sort((a, b) => a.id.localeCompare(b.id)).forEach(e => {
+                const status = e.attendance[student] ? "Present" : "Absent";
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${e.id} | ${e.course}</td><td>${status}</td>`;
+                tbody.appendChild(tr);
+            });
+            document.getElementById("studentModal").style.display = "flex";
+        }
+        document.getElementById("closeSessionModal").addEventListener("click", () => {
+            document.getElementById("sessionModal").style.display = "none";
+        });
+        document.getElementById("closeStudentModal").addEventListener("click", () => {
+            document.getElementById("studentModal").style.display = "none";
+        });
+        window.addEventListener("click", (e) => {
+            if (e.target.classList.contains("modal")) { e.target.style.display = "none"; }
+        });
+
+        /************* UTILITY *************/
+        function getCurrentTimestamp() {
+            const now = new Date();
+            const pad = n => n.toString().padStart(2, '0');
+            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        }
+
+        /************* INITIALIZATION *************/
+        updateDashboard();
+        updateDashboardStudent();
+        populateAnnouncementsTable();
+    </script>
+</body>
+
+</html>
